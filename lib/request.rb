@@ -30,5 +30,7 @@ class Request
             key, value = line.split("=", 2)
             @params.store(key, value)
         end
+
+        @method = "nej"
     end
 end
