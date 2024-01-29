@@ -1,22 +1,44 @@
+require 'route_info'
+
 class Router
+    VERSION = "HTTP 1.1"
+
     def initialize
         @routes = []
     end
 
-    def add_route(route)
-        exp = generate_regular_route(route)
-        if !@routes.include?(exp)
-            @routes << exp
-        end
+    def add_route(route, &block)
+        expression = generate_regular_route(route)
+        info = RouteInfo.new(expression, block)
+        @routes << info
     end
 
-    def match_route(route)
-        @routes.each do |r|
-            if !!(route =~ r)
-                return true
+    def run_route(route)
+        info = find_route_info(route)
+        if info == nil
+            return puts("Route not found")
+        end
+
+        args = info.expression.match(route)[1..-1]
+
+        info.block.call(args)
+    end
+
+    def generate_response(content)
+        status = "200 OK"
+        response = "#{VERSION} #{status}\n"
+        response += "Content-Length: #{content.to_s.length}\n"
+        response += "\n#{content}"
+        return response
+    end
+
+    private def find_route_info(route)
+        @routes.each do |info|
+            if !!(info.expression =~ route)
+                return info
             end
         end
-        return false
+        return nil
     end
 
     private def generate_regular_route(route)
