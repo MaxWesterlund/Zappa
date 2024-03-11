@@ -1,8 +1,11 @@
 require_relative 'lib/request'
 require_relative 'lib/router'
 
-router = Router.new
+request = File.read("spec/example_requests/get-fruits-with-filter.request.txt")
+parsed_request = Request.new(request)
 
-router.add_route("/hej")
-p router.match_route("/hej")
-p router.match_route("/nej")
+puts "Method: #{parsed_request.method}"
+puts "Resource: #{parsed_request.resource}"
+puts "Version: #{parsed_request.version}"
+puts "Headers: #{parsed_request.headers}"
+puts "Params #{parsed_request.params}"
