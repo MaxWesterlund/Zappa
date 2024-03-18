@@ -3,6 +3,8 @@ require_relative 'router'
 require_relative 'request'
 require_relative 'response'
 
+# @author Daniel Berg
+# @author Max Westerlund
 class HTTPServer
     attr_accessor :router
 

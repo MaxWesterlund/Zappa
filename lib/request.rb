@@ -1,3 +1,4 @@
+# @author Max Westerlund
 class Request
     attr_reader :method, :resource, :version, :headers, :params
 

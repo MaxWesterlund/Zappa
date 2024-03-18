@@ -1,3 +1,4 @@
+# @author Max Westerlund
 class RouteInfo
     attr_reader :route
     attr_reader :expression

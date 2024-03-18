@@ -1,5 +1,6 @@
 require_relative 'route_info'
 
+# @author Max Westerlund
 class Router
     def initialize
         @routes = []
