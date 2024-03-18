@@ -5,6 +5,10 @@ class Router
         @routes = []
     end
 
+    # Checks if a route is added
+    #
+    # @param request [Request] The request containing the route
+    # @return [Boolean] If the route exists or not
     def route_exists?(request)
         resource = request.resource
         @routes.each do |route|
@@ -16,12 +20,20 @@ class Router
         return false
     end
 
+    # Adds a route so that it can be found by the server
+    #
+    # @param route [String] The route that should be added
     def add_route(route, &block)
         expression = generate_regular_route(route)
         info = RouteInfo.new(route, expression, block)
         @routes << info
     end
 
+    # Finds the route block and creates a HTTP-response
+    #
+    # @param route [String] The route that should be run
+    # @param is_file [Boolean] Determines if a file should be read or not
+    # @return [String] A corresponding HTTP-response
     def run_route(route, is_file)
         if is_file
             file_format = route.match(/\w+\z/)
@@ -38,7 +50,6 @@ class Router
             response = generate_response(content, "html")
             return response
         end
-
     end
 
     private def find_route_info(route)
@@ -57,9 +68,11 @@ class Router
 
     private def get_read_type(file_format)
         case file_format
-        when "html" || "css"
+        when "html" 
             return "r"
-        when "jpg" || "jpeg"
+        when "css"
+            return "r"
+        else
             return "rb"
         end
     end

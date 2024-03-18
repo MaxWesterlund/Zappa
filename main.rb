@@ -1,11 +1,15 @@
 require_relative 'lib/request'
 require_relative 'lib/router'
+require_relative 'lib/tcp_server'
 
-request = File.read("spec/example_requests/get-fruits-with-filter.request.txt")
-parsed_request = Request.new(request)
+server = HTTPServer.new(4567)
 
-puts "Method: #{parsed_request.method}"
-puts "Resource: #{parsed_request.resource}"
-puts "Version: #{parsed_request.version}"
-puts "Headers: #{parsed_request.headers}"
-puts "Params #{parsed_request.params}"
+server.router.add_route("/") do |args|
+    File.read("./views/index.html")
+end
+
+server.router.add_route("/test/:a/:b") do |args|
+    "The first param is: #{args[0]}, and the second param is: #{args[1]}"
+end
+
+server.start()

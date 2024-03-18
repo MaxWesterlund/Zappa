@@ -4,23 +4,21 @@ require_relative 'request'
 require_relative 'response'
 
 class HTTPServer
+    attr_accessor :router
 
+    # Initializes a new HTTP-server
+    # 
+    # @param port [Integer] The port that the server should be run on
     def initialize(port)
         @port = port
+        @router = Router.new()
     end
 
+    # Starts a new server and continiously checks if a route is matched
+    #
     def start
         server = TCPServer.new(@port)
-        puts "Listening on #{@port}"
-        router = Router.new
-
-        router.add_route("/") do |args|
-            File.read("./views/index.html")
-        end
-
-        router.add_route("/test/:a/:b") do |args|
-            "The first param is: #{args[0]}, and the second param is: #{args[1]}"
-        end
+        puts "Listening on #{@port}" 
 
         while session = server.accept
             data = ""
@@ -33,13 +31,13 @@ class HTTPServer
             puts "-" * 40 
 
             request = Request.new(data)
-            if router.route_exists?(request) || File.file?("./public/#{request.resource}")
+            if @router.route_exists?(request) || File.file?("./public/#{request.resource}")
                 puts "MATCHED ROUTE: #{request.resource}"
 
                 is_file = File.file?("./public/#{request.resource}")
                 puts "IS FILE: #{is_file}"
 
-                response = router.run_route(request.resource, is_file)
+                response = @router.run_route(request.resource, is_file)
                 session.print response
                 session.close
             else
@@ -50,6 +48,3 @@ class HTTPServer
         end
     end
 end
-
-server = HTTPServer.new(4567)
-server.start
